@@ -1,0 +1,19 @@
+h1,
+h2 {
+  font-family: Lato;
+}
+
+#app {
+  background: rgb(218, 228, 215);
+  padding: 0.2rem;
+  margin: 1rem;
+  border-radius: 0.6rem;
+}
+
+.container--1,
+.container--2 {
+  background: rgb(227, 223, 231);
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 0.6rem;
+}
