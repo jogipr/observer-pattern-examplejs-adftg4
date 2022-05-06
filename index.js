@@ -9,41 +9,48 @@ let employee = {
   value: '',
 };
 
-Object.defineProperty(employee, 'name', {
-  get: function () {
-    return this.value;
-  },
-  set: function (value) {
-    this.value = value;
-    employeeSubscriptions.publish();
-  },
-});
+const getEmployeeSubscription = (subToEmployee) => {
+  const subscribers = [];
 
-let employeeSubscriptions = {
-  subscribers: [],
-  employee,
+  function publish() {
+    subscribers.forEach((sub) => sub(subToEmployee));
+  }
 
-  subscribe(callback) {
-    this.subscribers.push(callback);
-  },
+  Object.defineProperty(subToEmployee, 'name', {
+    get: function () {
+      return this.value;
+    },
+    set: function (value) {
+      this.value = value;
+      publish();
+    },
+  });
 
-  publish() {
-    this.subscribers.forEach((sub) => sub(employee));
-  },
+  return {
+    subscribe(callback) {
+      subscribers.push(callback);
+    },
+  };
 };
 
 const sourceInput = document.querySelector('#sourceInput');
 const targetOutput = document.querySelector('#targetOutput');
+sourceInput.addEventListener('keyup', updateSource);
 
-sourceInput.addEventListener('keyup', function (e) {
+function updateSource(e) {
   const {
     target: { value },
   } = e;
   employee.name = value;
-});
+}
 
 function updateTarget({ value }) {
   targetOutput.innerHTML = value;
 }
 
-employeeSubscriptions.subscribe(updateTarget);
+let proxyEmp = getEmployeeSubscription(employee);
+proxyEmp.subscribe(updateTarget);
+
+
+//This does not look to me fair solution , but currently it is solving the problem
+// will try to clean solution via proxy or better pattern
